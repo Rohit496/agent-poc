@@ -1,0 +1,69 @@
+<div class="table-controls">
+  <input
+    type="text"
+    placeholder="Search name, model, location..."
+    [(ngModel)]="searchText"
+    (ngModelChange)="apply()"
+    class="search-input"
+  />
+  <select [(ngModel)]="filterType" (ngModelChange)="apply()">
+    <option value="">All Types</option>
+    <option value="server">Server</option>
+    <option value="hardware">Hardware</option>
+  </select>
+  <select [(ngModel)]="filterStatus" (ngModelChange)="apply()">
+    <option value="">All Statuses</option>
+    <option value="active">Active</option>
+    <option value="inactive">Inactive</option>
+    <option value="maintenance">Maintenance</option>
+  </select>
+  <button class="export-btn" (click)="exportCsv()" [disabled]="displayed.length === 0">
+    Export CSV
+  </button>
+</div>
+
+<div class="table-wrapper" *ngIf="displayed.length > 0; else empty">
+  <table>
+    <thead>
+      <tr>
+        <th (click)="sort('name')" class="sortable">
+          Name <span>{{ sortKey === 'name' ? (sortDir === 'asc' ? '↑' : '↓') : '↕' }}</span>
+        </th>
+        <th (click)="sort('asset_type')" class="sortable">
+          Type <span>{{ sortKey === 'asset_type' ? (sortDir === 'asc' ? '↑' : '↓') : '↕' }}</span>
+        </th>
+        <th (click)="sort('status')" class="sortable">
+          Status <span>{{ sortKey === 'status' ? (sortDir === 'asc' ? '↑' : '↓') : '↕' }}</span>
+        </th>
+        <th (click)="sort('location')" class="sortable">
+          Location <span>{{ sortKey === 'location' ? (sortDir === 'asc' ? '↑' : '↓') : '↕' }}</span>
+        </th>
+        <th (click)="sort('manufacturer')" class="sortable">
+          Manufacturer <span>{{ sortKey === 'manufacturer' ? (sortDir === 'asc' ? '↑' : '↓') : '↕' }}</span>
+        </th>
+        <th>Model</th>
+        <th>Serial</th>
+        <th (click)="sort('purchase_date')" class="sortable">
+          Purchase Date <span>{{ sortKey === 'purchase_date' ? (sortDir === 'asc' ? '↑' : '↓') : '↕' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let asset of displayed">
+        <td class="asset-name">{{ asset.name }}</td>
+        <td><span class="badge" [class]="'badge-' + asset.asset_type">{{ asset.asset_type }}</span></td>
+        <td><span class="badge" [class]="'badge-' + asset.status">{{ asset.status }}</span></td>
+        <td>{{ asset.location }}</td>
+        <td>{{ asset.manufacturer }}</td>
+        <td>{{ asset.model }}</td>
+        <td class="mono">{{ asset.serial_number }}</td>
+        <td>{{ asset.purchase_date }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="count">Showing {{ displayed.length }} of {{ assets.length }} assets</p>
+</div>
+
+<ng-template #empty>
+  <p class="empty-state">No assets match your filters.</p>
+</ng-template>

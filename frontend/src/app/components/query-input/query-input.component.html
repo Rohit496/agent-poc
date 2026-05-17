@@ -1,0 +1,26 @@
+<form class="query-form" (ngSubmit)="onSubmit()">
+  <div class="field-group">
+    <label for="partyNumber">Party Number</label>
+    <input
+      id="partyNumber"
+      type="text"
+      placeholder="e.g. P-10042"
+      [(ngModel)]="partyNumber"
+      name="partyNumber"
+    />
+    <span class="hint">Format: P-&lt;number&gt; (try P-10042, P-20017, P-30099)</span>
+  </div>
+
+  <div class="field-group">
+    <label for="query">Ask about assets</label>
+    <textarea
+      id="query"
+      rows="2"
+      placeholder="e.g. Show me all active servers, or list Dell hardware in DC-East"
+      [(ngModel)]="query"
+      name="query"
+    ></textarea>
+  </div>
+
+  <button type="submit" [disabled]="!isValid">Ask →</button>
+</form>

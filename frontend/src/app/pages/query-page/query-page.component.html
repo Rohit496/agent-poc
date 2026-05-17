@@ -1,0 +1,35 @@
+<div class="page">
+  <header class="header">
+    <h1>Agentrix</h1>
+    <p class="subtitle">Asset Intelligence — query servers &amp; hardware by PartyNumber using natural language</p>
+  </header>
+
+  <main class="content">
+    <section class="query-section">
+      <app-query-input (querySubmit)="onQuerySubmit($event)" />
+    </section>
+
+    <section class="results-section">
+      @if (state() === 'loading') {
+        <app-loading-spinner />
+      }
+
+      @if (state() === 'error') {
+        <div class="error-banner">
+          <strong>Error:</strong> {{ errorMessage() }}
+        </div>
+      }
+
+      @if (state() === 'success' && response()) {
+        <app-agent-response [response]="response()!" />
+      }
+
+      @if (state() === 'idle') {
+        <div class="idle-state">
+          <p>Enter a Party Number and ask about its assets above to get started.</p>
+          <p class="hint">Try: <em>"Show me all active servers"</em> for Party P-10042</p>
+        </div>
+      }
+    </section>
+  </main>
+</div>

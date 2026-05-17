@@ -1,0 +1,23 @@
+.response-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.summary-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.2rem;
+  background: #eff6ff;
+  border-left: 4px solid #0d6efd;
+  border-radius: 0 6px 6px 0;
+  font-size: 1rem;
+  color: #1e40af;
+  font-weight: 500;
+
+  .icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+}
