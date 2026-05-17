@@ -12,6 +12,13 @@ interface ChatMessage {
   loading?: boolean;
 }
 
+interface ToneNote {
+  frequency: number;
+  start: number;
+  duration: number;
+  volume: number;
+}
+
 @Component({
   selector: 'app-chat-bot',
   standalone: true,
@@ -55,7 +62,9 @@ export class ChatBotComponent implements AfterViewChecked {
   }
 
   toggle(): void {
-    this.isOpen.update(v => !v);
+    const nextState = !this.isOpen();
+    this.isOpen.set(nextState);
+    this.playToggleTone(nextState);
   }
 
   get canSend(): boolean {
@@ -71,7 +80,7 @@ export class ChatBotComponent implements AfterViewChecked {
     this.messages.update(msgs => [...msgs, { role: 'user', text: userText }]);
     this.messages.update(msgs => [...msgs, { role: 'agent', text: '', loading: true }]);
     this.loading.set(true);
-    this.primeCompletionTone();
+    this.primeAudio();
 
     this.agentApi.query({ query: userText }).subscribe({
       next: (res) => {
@@ -116,22 +125,38 @@ export class ChatBotComponent implements AfterViewChecked {
     } catch {}
   }
 
-  private primeCompletionTone(): void {
+  private primeAudio(): void {
     try {
       this.getAudioContext()?.resume();
     } catch {}
   }
 
+  private playToggleTone(opened: boolean): void {
+    const notes = opened
+      ? [
+          { frequency: 523.25, start: 0, duration: 0.07, volume: 0.06 },
+          { frequency: 659.25, start: 0.07, duration: 0.1, volume: 0.07 },
+        ]
+      : [
+          { frequency: 659.25, start: 0, duration: 0.06, volume: 0.055 },
+          { frequency: 392, start: 0.06, duration: 0.11, volume: 0.06 },
+        ];
+
+    this.playTone(notes);
+  }
+
   private playCompletionTone(): void {
+    this.playTone([
+      { frequency: 659.25, start: 0, duration: 0.08, volume: 0.08 },
+      { frequency: 880, start: 0.09, duration: 0.12, volume: 0.08 },
+    ]);
+  }
+
+  private playTone(notes: ToneNote[]): void {
     const context = this.getAudioContext();
     if (!context) return;
 
     const play = (): void => {
-      const notes = [
-        { frequency: 659.25, start: 0, duration: 0.08 },
-        { frequency: 880, start: 0.09, duration: 0.12 },
-      ];
-
       for (const note of notes) {
         const oscillator = context.createOscillator();
         const gain = context.createGain();
@@ -141,7 +166,7 @@ export class ChatBotComponent implements AfterViewChecked {
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(note.frequency, startsAt);
         gain.gain.setValueAtTime(0.0001, startsAt);
-        gain.gain.exponentialRampToValueAtTime(0.08, startsAt + 0.015);
+        gain.gain.exponentialRampToValueAtTime(note.volume, startsAt + 0.015);
         gain.gain.exponentialRampToValueAtTime(0.0001, endsAt);
 
         oscillator.connect(gain);
