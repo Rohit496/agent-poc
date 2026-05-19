@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agentrix Chat Widget — Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; background: #f8fafc; color: #111; }
+    h1 { color: #111827; }
+    h2 { color: #374151; margin-top: 2rem; }
+    pre { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 8px; font-size: 0.85rem; overflow-x: auto; }
+    code { background: #e2e8f0; color: #1e293b; padding: 0.1em 0.4em; border-radius: 4px; }
+    #log { min-height: 3rem; }
+  </style>
+</head>
+<body>
+  <h1>Agentrix Chat Widget</h1>
+  <p>A generic, embeddable AI chat widget. Works with any backend.</p>
+
+  <h2>Live demo (Agentrix backend)</h2>
+  <agentrix-chat
+    api-url="http://localhost:8000"
+    title="Agentrix Assistant"
+    welcome="Hi! I'm your asset intelligence assistant. Ask me anything — include a Party Number like P-10042 and I'll find the assets for you."
+    suggestions='["Show me all active servers for P-10042","List all hardware in DC-East for P-20017","Show all assets for P-20017"]'
+    placeholder="e.g. Show servers for P-10042..."
+    endpoint="/api/query"
+    query-key="query"
+    response-key="summary"
+  ></agentrix-chat>
+
+  <h2>Last agentrix-response event</h2>
+  <pre id="log">// waiting for a response...</pre>
+
+  <script>
+    window.addEventListener('agentrix-response', function(e) {
+      document.getElementById('log').textContent = JSON.stringify(e.detail, null, 2);
+    });
+  </script>
+</body>
+</html>
