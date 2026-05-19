@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "asset-tools": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/Users/rohit/Workspace/Agentrix/backend",
+        "run",
+        "python",
+        "mcp_server.py"
+      ],
+      "env": {
+        "API_BASE_URL": "http://localhost:8000"
+      }
+    }
+  }
+}
