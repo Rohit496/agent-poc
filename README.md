@@ -1,3 +1,9 @@
+---
+title: Agentrix MCP
+sdk: docker
+app_port: 7860
+---
+
 # Agentrix
 
 An AI-powered asset intelligence platform. Ask questions in plain English — the LangGraph agent finds your assets and updates the dashboard in real time.
@@ -235,6 +241,33 @@ Then point your app/backend at the hosted MCP server:
 
 ```bash
 MCP_SERVER_URL=https://<your-render-service>.onrender.com uv run uvicorn main:app --port 8000 --reload
+```
+
+### Hugging Face Spaces deployment
+
+Use this path when you want a free Docker Space for testing and do not want to use Render.
+
+Create a new Hugging Face Space:
+
+```text
+SDK: Docker
+Repository: Rohit496/agent-poc
+Visibility: Public
+```
+
+The root `Dockerfile` starts the backend API internally on port `8000` and exposes the MCP server on the Space port `7860`.
+
+After the Space builds, the endpoints are:
+
+```text
+https://<user>-<space-name>.hf.space/health
+https://<user>-<space-name>.hf.space/mcp
+```
+
+Use the hosted MCP server from another app with:
+
+```env
+MCP_SERVER_URL=https://<user>-<space-name>.hf.space
 ```
 
 ---
