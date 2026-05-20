@@ -33,16 +33,19 @@ if MCP_SERVER_URL:
         "asset-tools": _hosted_mcp_connection(MCP_SERVER_URL)
     }
 else:
-    # Local development - launch MCP server as subprocess via stdio.
-    MCP_CONFIG = {
-        "asset-tools": {
-            "transport": "stdio",
-            "command": "uv",
-            "args": ["--directory", _DIR, "run", "python", str(Path(__file__).parent / "mcp_server.py")],
-            "cwd": _DIR,
-            "env": {"API_BASE_URL": API_BASE_URL},
-            "encoding": "utf-8",
-            "encoding_error_handler": "strict",
-            "session_kwargs": {},
+    if os.getenv("RENDER"):
+        MCP_CONFIG = {}
+    else:
+        # Local development - launch MCP server as subprocess via stdio.
+        MCP_CONFIG = {
+            "asset-tools": {
+                "transport": "stdio",
+                "command": "uv",
+                "args": ["--directory", _DIR, "run", "python", str(Path(__file__).parent / "mcp_server.py")],
+                "cwd": _DIR,
+                "env": {"API_BASE_URL": API_BASE_URL},
+                "encoding": "utf-8",
+                "encoding_error_handler": "strict",
+                "session_kwargs": {},
+            }
         }
-    }

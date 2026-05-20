@@ -1,5 +1,12 @@
 services:
   - type: web
+    name: agentrix-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+
+  - type: web
     name: agentrix-mcp
     runtime: docker
     dockerfilePath: ./backend/Dockerfile.mcp
@@ -13,4 +20,7 @@ services:
       - key: MCP_PATH
         value: /mcp
       - key: API_BASE_URL
-        sync: false
+        fromService:
+          type: web
+          name: agentrix-backend
+          property: hostport

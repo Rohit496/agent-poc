@@ -8,7 +8,8 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 load_dotenv()
-BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
+BASE_URL = API_BASE_URL if API_BASE_URL.startswith(("http://", "https://")) else f"http://{API_BASE_URL}"
 
 mcp = FastMCP("asset-tools")
 
