@@ -33,7 +33,7 @@ An AI-powered asset intelligence platform. Ask questions in plain English — th
                                     │  ReAct Agent     │
                                     │  (GPT-4o)        │
                                     └──────┬──────────┘
-                                           │ stdio
+                                           │ stdio / HTTP
                                     ┌──────▼──────────┐
                                     │  MCP Server      │
                                     │  (asset tools)   │
@@ -166,6 +166,79 @@ Open **http://localhost:4200** and click the chat button in the bottom-right cor
 
 ---
 
+## Docker MCP Server
+
+Use this when you want the MCP server hosted in Docker, while your app/backend runs locally.
+
+Start your local backend first:
+
+```bash
+cd backend
+uv run uvicorn main:app --port 8000 --reload
+```
+
+Then start the hosted MCP server:
+
+```bash
+docker compose up --build mcp
+```
+
+The MCP endpoint is:
+
+```text
+http://localhost:8001/mcp
+```
+
+To make the local Agentrix backend use this hosted MCP server instead of launching `mcp_server.py` over stdio:
+
+```bash
+cd backend
+MCP_SERVER_URL=http://localhost:8001 uv run uvicorn main:app --port 8000 --reload
+```
+
+The MCP container calls the backend REST API through:
+
+```text
+API_BASE_URL=http://host.docker.internal:8000
+```
+
+Override it when your REST API lives somewhere else:
+
+```bash
+API_BASE_URL=http://host.docker.internal:9000 docker compose up --build mcp
+```
+
+To run both backend and MCP in Docker:
+
+```bash
+API_BASE_URL=http://backend:8000 docker compose --profile backend up --build
+```
+
+### Cloud deployment
+
+This repo includes `render.yaml` for deploying the MCP server as a Render Docker web service.
+
+Before deploying, make sure `API_BASE_URL` points to a backend REST API that the cloud MCP service can reach. Do not use `localhost` for cloud:
+
+```text
+API_BASE_URL=https://your-agentrix-backend.example.com
+```
+
+After deployment, Render gives the service a public URL. Your MCP endpoints will be:
+
+```text
+https://<your-render-service>.onrender.com/health
+https://<your-render-service>.onrender.com/mcp
+```
+
+Then point your app/backend at the hosted MCP server:
+
+```bash
+MCP_SERVER_URL=https://<your-render-service>.onrender.com uv run uvicorn main:app --port 8000 --reload
+```
+
+---
+
 ## How It Works
 
 ```
@@ -288,7 +361,7 @@ npm run build   # builds + copies bundle to frontend/src/assets/agentrix-chat.js
 
 ## MCP Server
 
-The MCP server exposes three tools to the LangGraph agent over stdio:
+The MCP server exposes three tools to the LangGraph agent. Local development uses stdio by default; Docker hosting uses HTTP at `/mcp`.
 
 | Tool | Description |
 |---|---|
@@ -302,6 +375,13 @@ Inspect tools interactively:
 cd backend
 npx @modelcontextprotocol/inspector@latest uv run python mcp_server.py
 # Opens inspector UI — keep backend running on port 8000
+```
+
+Inspect the Docker-hosted MCP server:
+
+```bash
+docker compose up --build mcp
+npx @modelcontextprotocol/inspector@latest http://localhost:8001/mcp
 ```
 
 ---

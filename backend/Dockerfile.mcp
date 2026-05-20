@@ -1,0 +1,24 @@
+FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim
+
+WORKDIR /app
+
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
+
+COPY pyproject.toml uv.lock ./
+COPY backend/pyproject.toml backend/pyproject.toml
+RUN uv sync --locked --no-dev --package backend --no-install-project
+
+COPY backend backend
+RUN uv sync --locked --no-dev --package backend
+
+WORKDIR /app/backend
+
+ENV MCP_TRANSPORT=http
+ENV MCP_HOST=0.0.0.0
+ENV MCP_PATH=/mcp
+ENV API_BASE_URL=http://host.docker.internal:8000
+
+EXPOSE 8001 10000
+
+CMD ["uv", "run", "python", "mcp_server.py"]

@@ -1,0 +1,17 @@
+.git
+.venv
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+
+backend/.env
+backend/.venv
+
+frontend/node_modules/
+frontend/dist/
+chatbot-widget/node_modules/
+chatbot-widget/dist/
+
+*.pyc
+*.pyo
+*.log

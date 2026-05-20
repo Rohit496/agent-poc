@@ -1,9 +1,11 @@
-"""MCP server — exposes REST API as async tools for the LangGraph agent (stdio transport)."""
+"""MCP server - exposes REST API as async tools for the LangGraph agent."""
 import json
 import os
 import httpx
 from fastmcp import FastMCP
 from dotenv import load_dotenv
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 load_dotenv()
 BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
@@ -64,5 +66,31 @@ async def search_assets(party_number: str, q: str = "", asset_type: str = "", st
     return await _get("/api/assets/search", params)
 
 
+@mcp.custom_route("/health", methods=["GET"])
+async def health(_: Request) -> JSONResponse:
+    return JSONResponse({"status": "ok", "service": "asset-tools"})
+
+
+def _run() -> None:
+    transport = os.getenv("MCP_TRANSPORT", "stdio").lower()
+
+    if transport == "stdio":
+        mcp.run()
+        return
+
+    if transport not in {"http", "streamable-http", "sse"}:
+        raise ValueError(
+            "MCP_TRANSPORT must be one of: stdio, http, streamable-http, sse"
+        )
+
+    default_path = "/sse" if transport == "sse" else "/mcp"
+    mcp.run(
+        transport=transport,
+        host=os.getenv("MCP_HOST", "0.0.0.0"),
+        port=int(os.getenv("MCP_PORT", os.getenv("PORT", "8001"))),
+        path=os.getenv("MCP_PATH", default_path),
+    )
+
+
 if __name__ == "__main__":
-    mcp.run()
+    _run()
