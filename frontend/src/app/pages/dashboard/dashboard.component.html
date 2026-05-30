@@ -1,10 +1,17 @@
 <div class="dashboard">
-
   <header class="header">
     <div class="header-left">
       <div class="logo-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="22" height="22">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="white"
+          width="22"
+          height="22"
+        >
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"
+          />
         </svg>
       </div>
       <div>
@@ -12,26 +19,42 @@
         <p class="subtitle">AI Asset Intelligence</p>
       </div>
     </div>
-    @if (assetState.currentPartyNumber()) {
-      <div class="party-badge">
-        <span class="label">Party</span>
-        <span class="value">{{ assetState.currentPartyNumber() }}</span>
-      </div>
-    }
+    <div class="header-right">
+      <nav class="header-nav">
+        <a routerLink="/" class="nav-link active">Assets</a>
+        <a routerLink="/scan" class="nav-link">Scanner</a>
+      </nav>
+      @if (assetState.currentPartyNumber()) {
+        <div class="party-badge">
+          <span class="label">Party</span>
+          <span class="value">{{ assetState.currentPartyNumber() }}</span>
+        </div>
+      }
+    </div>
   </header>
 
   <main class="content">
-
     @if (!assetState.currentResponse()) {
       <!-- Empty state -->
       <div class="empty-state">
         <div class="empty-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#d1d5db" width="64" height="64">
-            <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="#d1d5db"
+            width="64"
+            height="64"
+          >
+            <path
+              d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"
+            />
           </svg>
         </div>
         <h2>Ask the AI Agent</h2>
-        <p>Click the chat icon in the bottom-right corner and ask about any asset using natural language.</p>
+        <p>
+          Click the chat icon in the bottom-right corner and ask about any asset
+          using natural language.
+        </p>
         <div class="examples">
           <p class="examples-label">Try asking:</p>
           <span class="chip">"Show me all active servers for P-10042"</span>
@@ -43,17 +66,35 @@
       <!-- Results -->
       <div class="results">
         <div class="summary-banner">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1d4ed8" width="18" height="18">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="#1d4ed8"
+            width="18"
+            height="18"
+          >
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"
+            />
           </svg>
           <span>{{ assetState.currentResponse()!.summary }}</span>
         </div>
 
         <div class="results-meta">
-          <span class="total-badge">{{ assetState.currentResponse()!.metadata.total }} assets found</span>
-          @if ((assetState.currentResponse()!.metadata.filters_applied | keyvalue).length > 0) {
+          <span class="total-badge"
+            >{{ assetState.currentResponse()!.metadata.total }} assets
+            found</span
+          >
+          @if (
+            (assetState.currentResponse()!.metadata.filters_applied | keyvalue)
+              .length > 0
+          ) {
             <span class="filters-label">Filters:</span>
-            @for (f of assetState.currentResponse()!.metadata.filters_applied | keyvalue; track f.key) {
+            @for (
+              f of assetState.currentResponse()!.metadata.filters_applied
+                | keyvalue;
+              track f.key
+            ) {
               <span class="filter-chip">{{ f.key }}: {{ f.value }}</span>
             }
           }
@@ -62,6 +103,5 @@
         <app-asset-table [assets]="assetState.currentResponse()!.assets" />
       </div>
     }
-
   </main>
 </div>

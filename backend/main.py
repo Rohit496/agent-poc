@@ -5,14 +5,21 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from fixtures import ASSETS
-from agent import run_query
+from agent import run_query, mcp_session_manager
+from scan_routes import router as scan_router
 
 load_dotenv()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    yield
+    # Initialize and persistent connect to all MCP servers on startup
+    await mcp_session_manager.start()
+    try:
+        yield
+    finally:
+        # Clean up and close all MCP connections on shutdown
+        await mcp_session_manager.stop()
 
 
 app = FastAPI(title="Agentrix", version="1.0.0", lifespan=lifespan)
@@ -23,6 +30,8 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type"],
 )
+
+app.include_router(scan_router)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

@@ -1,17 +1,25 @@
 {
+  // "_comment": "Use 'mcpServers_local_stdio' for local dev, 'mcpServers' (hosted) for everyone else.",
+
+  // "mcpServers_local_stdio": {
+  //   "asset-tools": {
+  //     "command": "uv",
+  //     "args": [
+  //       "--directory",
+  //       "/Users/rohit/Workspace/Agentrix/backend",
+  //       "run",
+  //       "python",
+  //       "mcp_server.py"
+  //     ],
+  //     "env": {
+  //       "API_BASE_URL": "http://localhost:8000"
+  //     }
+  //   }
+  // },
+
   "mcpServers": {
     "asset-tools": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/Users/rohit/Workspace/Agentrix/backend",
-        "run",
-        "python",
-        "mcp_server.py"
-      ],
-      "env": {
-        "API_BASE_URL": "http://localhost:8000"
-      }
+      "serverUrl": "https://rohitbhadana-agentrix-mcp.hf.space/mcp"
     }
   }
 }
